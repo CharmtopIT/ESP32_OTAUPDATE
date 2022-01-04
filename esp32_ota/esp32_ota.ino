@@ -12,7 +12,7 @@ int last_button_state;
 
 
 String FirmwareVer = {
-  "2.0"
+  "1.9"
 };
 #define URL_fw_Version "https://raw.githubusercontent.com/CharmtopIT/ESP32_OTAUPDATE/master/esp32_ota/bin_version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/CharmtopIT/ESP32_OTAUPDATE/master/esp32_ota/fw.bin"
