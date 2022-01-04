@@ -4,15 +4,19 @@
 #include <WiFiClientSecure.h>
 #include "cert.h"
 
-const char * ssid = "home_wifi";
-const char * password = "helloworld";
+const char * ssid = "CharmLinksys";
+const char * password = "28511328";
+
+int button_state;
+int last_button_state; 
 
 
 String FirmwareVer = {
-  "2.2"
+  "2.6"
 };
 #define URL_fw_Version "https://raw.githubusercontent.com/programmer131/ESP8266_ESP32_SelfUpdate/master/esp32_ota/bin_version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/programmer131/ESP8266_ESP32_SelfUpdate/master/esp32_ota/fw.bin"
+#define BP 23
 
 //#define URL_fw_Version "http://cade-make.000webhostapp.com/version.txt"
 //#define URL_fw_Bin "http://cade-make.000webhostapp.com/firmware.bin"
@@ -25,6 +29,7 @@ unsigned long previousMillis = 0; // will store last time LED was updated
 unsigned long previousMillis_2 = 0;
 const long interval = 60000;
 const long mini_interval = 1000;
+
 void repeatedCall() {
   static int num=0;
   unsigned long currentMillis = millis();
@@ -76,19 +81,23 @@ void IRAM_ATTR isr() {
 
 
 void setup() {
-  pinMode(button_boot.PIN, INPUT);
-  attachInterrupt(button_boot.PIN, isr, RISING);
+  pinMode(BP, INPUT_PULLUP);
+//  attachInterrupt(button_boot.PIN, isr, RISING);
+  button_state = digitalRead(BP);
   Serial.begin(115200);
   Serial.print("Active firmware version:");
   Serial.println(FirmwareVer);
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(2, OUTPUT);
   connect_wifi();
 }
 void loop() {
-  if (button_boot.pressed) { //to connect wifi via Android esp touch app 
+  last_button_state = button_state;      // save the last state
+  button_state = digitalRead(BP); // read new state
+  if (last_button_state == HIGH && button_state == LOW) { //to connect wifi via Android esp touch app 
+    Serial.println("The button is pressed");
     Serial.println("Firmware update Starting..");
     firmwareUpdate();
-    button_boot.pressed = false;
+//    button_boot.pressed = false;
   }
   repeatedCall();
 }
@@ -111,7 +120,7 @@ void connect_wifi() {
 void firmwareUpdate(void) {
   WiFiClientSecure client;
   client.setCACert(rootCACertificate);
-  httpUpdate.setLedPin(LED_BUILTIN, LOW);
+  httpUpdate.setLedPin(2, LOW);
   t_httpUpdate_return ret = httpUpdate.update(client, URL_fw_Bin);
 
   switch (ret) {
