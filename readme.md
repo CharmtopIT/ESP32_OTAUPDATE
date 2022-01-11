@@ -1,5 +1,5 @@
 
-#What is OTA programming in ESP32?
+# What is OTA programming in ESP32?
 
 The OTA programming allows updating/uploading a new program to ESP32 using Wi-Fi instead of requiring the user to connect the ESP32 to a computer via USB to perform the update.
 
